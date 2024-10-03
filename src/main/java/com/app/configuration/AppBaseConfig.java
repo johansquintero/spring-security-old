@@ -13,7 +13,7 @@ public class AppBaseConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:mysql://localhost:3307/auth_db");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/auth_db");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUsername("root");
         dataSource.setPassword("12345");

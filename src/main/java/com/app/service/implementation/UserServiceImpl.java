@@ -1,6 +1,7 @@
 package com.app.service.implementation;
 
 import com.app.persistence.entity.RoleEntity;
+import com.app.persistence.entity.RoleEnum;
 import com.app.persistence.entity.UserEntity;
 import com.app.persistence.repository.IRoleCrudRepository;
 import com.app.persistence.repository.IUserCrudRepository;
@@ -50,11 +51,17 @@ public class UserServiceImpl implements IUserService {
     public AuthResponseDTO signUp(AuthRequestSignUpDTO authRequestSignUpDTO) {
 
         //valida si ya existe dicho usuario
-        this.userCrudRepository.findUserByUsername(authRequestSignUpDTO.username())
-                .orElseThrow(() -> new RuntimeException("User already exists!"));
-
+        if (this.userCrudRepository.findUserByUsername(authRequestSignUpDTO.username()).isPresent()){
+           throw  new RuntimeException("User already exists!");
+        }
         //obtencion y verificacion de los roles suministrados
-        List<RoleEntity> roleEntityList = this.roleCrudRepository.getRolesEntitiesByRoleEnumIn(authRequestSignUpDTO.authRolesRequestDto().rolesListName());
+        List<RoleEnum> roleList = authRequestSignUpDTO.authRolesRequestDto().rolesListName()
+                .stream()
+                .map(RoleEnum::valueOf)
+                .toList();
+
+        List<RoleEntity> roleEntityList = this.roleCrudRepository.getRolesEntitiesByRoleEnumIn(roleList);
+        System.out.println("LLEGO");
         if (roleEntityList.isEmpty()) {
             throw new RuntimeException("There are not authorities!");
         }

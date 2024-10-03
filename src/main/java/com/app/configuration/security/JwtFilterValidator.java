@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 @AllArgsConstructor
+@Component
 public class JwtFilterValidator  extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
