@@ -1,10 +1,13 @@
 package com.app.configuration.security;
 
+import com.app.presentation.advice.CustomAccessDeniedHandler;
+import com.app.presentation.advice.CustomAuthEntryPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,11 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 @AllArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilterValidator jwtFilterValidator;
 
-
+    private final CustomAuthEntryPoint entryPoint;
+    private final CustomAccessDeniedHandler accesDeniedHandler;
 
     @Bean
     @Override
@@ -48,6 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT).hasAuthority("UPDATE")
                 .antMatchers(HttpMethod.POST).hasAuthority("CREATE")
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(entryPoint)
+                .and()
+                .exceptionHandling().accessDeniedHandler(accesDeniedHandler)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtFilterValidator, UsernamePasswordAuthenticationFilter.class);
