@@ -2,6 +2,7 @@ package com.app.service.implementation;
 
 import com.app.persistence.entity.UserEntity;
 import com.app.persistence.repository.IUserCrudRepository;
+import com.app.presentation.advice.BadCredentialsException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserEntity userEntity = this.userCrudRepository.findUserByUsername(username).orElseThrow(() -> {
-            throw new RuntimeException("User with " + username + " does not exist!");
+            throw new BadCredentialsException("User with username " + username + " does not exist!");
         });
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
